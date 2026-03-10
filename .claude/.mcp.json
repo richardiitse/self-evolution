@@ -1,0 +1,26 @@
+{
+  "mcpServers": {
+    "self-evolution-consolidate": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "self_evolution.skills.consolidation.scripts.adapter"
+      ],
+      "env": {
+        "SKILL_NAME": "consolidate",
+        "SKILL_TYPE": "mcp"
+      }
+    },
+    "self-evolution-hyperparameter": {
+      "command": "python3",
+      "args": [
+        "-m",
+        "self_evolution.skills.hyperparameter.scripts.adapter"
+      ],
+      "env": {
+        "SKILL_NAME": "hyperparameter",
+        "SKILL_TYPE": "mcp"
+      }
+    }
+  }
+}

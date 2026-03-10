@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /Users/rongchuanxie/Documents/52VisionWorld/projects/52vw/self-evolution/*.py)",
+      "Bash(find /Users/rongchuanxie/.claude/plugins -type f -name \"*.json\" -path \"*commands*\" -o -name \"*.json\" -path \"*skills*\" 2>/dev/null | head -20)",
+      "Bash(find /Users/rongchuanxie/.claude -name \"*.md\" -path \"*/skills/*\" 2>/dev/null | head -5)",
+      "Bash(ls -la ~/.claude/.mcp* 2>/dev/null || echo \"MCP 配置不存在\")",
+      "Bash(ls -la ~/.claude/plugins/cache/anthropic-agent-skills/*/latest/.claude-plugin/plugin.json 2>/dev/null | head -5)",
+      "Bash(cat ~/.claude/plugins/cache/claude-plugins-official/skill-creator/latest/skills/*/SKILL.md 2>/dev/null | head -100)",
+      "Bash(find .claude/skills -type f -name \"*.py\" -o -name \"*.md\" -o -name \"*.json\" 2>/dev/null | sort)",
+      "Bash(python3 .claude/skills/consolidation/scripts/adapter.py 2>&1)",
+      "Bash(python3 .claude/skills/hyperparameter/scripts/adapter.py 2>&1)",
+      "Bash(python3 .claude/skills/consolidation/scripts/adapter.py --system=openclaw 2>&1 | head -20)",
+      "Bash(python3 .claude/skills/hyperparameter/scripts/adapter.py --system=nanoclaw 2>&1 | head -20)",
+      "Bash(chmod +x .claude/skills/consolidation/scripts/*.py .claude/skills/hyperparameter/scripts/*.py && ls -la .claude/skills/*/scripts/*.py)",
+      "Bash(python3 .claude/skills/consolidation/scripts/runner.py --dry-run 2>&1 | head -40)",
+      "Bash(echo '{\"search_space\":{\"learning_rate\":{\"type\":\"float\",\"min\":0.0001,\"max\":0.1,\"scale\":\"log\"},\"batch_size\":{\"type\":\"int\",\"min\":16,\"max\":64,\"step\":16}},\"algorithm\":\"random\",\"max_iterations\":5}' | python3 .claude/skills/hyperparameter/scripts/runner.py --system=openclaw 2>&1 | head -40)",
+      "Bash(python3 -c \"from pathlib import Path; p = Path\\('.claude/skills/consolidation/scripts/runner.py'\\).resolve\\(\\); print\\(f'File: {p}'\\); print\\(f'Parent x1: {p.parent}'\\); print\\(f'Parent x2: {p.parent.parent}'\\); print\\(f'Parent x3: {p.parent.parent.parent}'\\); print\\(f'Parent x4: {p.parent.parent.parent.parent}'\\)\")",
+      "Bash(python3 .claude/skills/consolidation/scripts/runner.py --dry-run 2>&1 | head -50)",
+      "Bash(echo '{\"search_space\":{\"learning_rate\":{\"type\":\"float\",\"min\":0.0001,\"max\":0.1,\"scale\":\"log\"},\"batch_size\":{\"type\":\"int\",\"min\":16,\"max\":64,\"step\":16}},\"algorithm\":\"random\",\"max_iterations\":5}' | python3 .claude/skills/hyperparameter/scripts/runner.py --system=openclaw 2>&1 | head -50)",
+      "Bash(python3 .claude/skills/consolidation/scripts/runner.py --dry-run 2>&1 | head -60)",
+      "Bash(echo '{\"search_space\":{\"learning_rate\":{\"type\":\"float\",\"min\":0.0001,\"max\":0.1,\"scale\":\"log\"},\"batch_size\":{\"type\":\"int\",\"min\":16,\"max\":64,\"step\":16}},\"algorithm\":\"random\",\"max_iterations\":3}' | python3 .claude/skills/hyperparameter/scripts/runner.py --system=openclaw 2>&1 | head -60)",
+      "Bash(echo '{\"search_space\":{\"learning_rate\":{\"type\":\"float\",\"min\":0.0001,\"max\":0.01,\"scale\":\"log\"}},\"algorithm\":\"bayesian\",\"max_iterations\":5}' | python3 .claude/skills/hyperparameter/scripts/runner.py --system=claude-code 2>&1 | head -60)",
+      "Bash(echo '{\"search_space\":{\"learning_rate\":{\"type\":\"float\",\"min\":0.0001,\"max\":0.01,\"scale\":\"log\"}},\"algorithm\":\"bayesian\",\"max_iterations\":5}' | python3 .claude/skills/hyperparameter/scripts/runner.py --system=claude-code 2>&1 | head -50)",
+      "Bash(echo \"=== 多系统 Skill 验证总结 ===\" && echo \"\" && echo \"1. 文件结构:\" && find .claude/skills -type f \\\\\\( -name \"*.py\" -o -name \"*.md\" \\\\\\) | sort && echo \"\" && echo \"2. 配置文件:\" && ls -la .claude/*.json && echo \"\" && echo \"3. 适配器测试:\" && python3 -c \"\nfrom pathlib import Path\nimport sys\nsys.path.insert\\(0, str\\(Path\\('.claude/skills/consolidation/scripts'\\)\\)\\)\nsys.path.insert\\(0, str\\(Path\\('.claude/skills/hyperparameter/scripts'\\)\\)\\)\nfrom adapter import SystemAdapter\n\n# 测试所有系统\nfor sys_name in ['claude-code', 'openclaw', 'nanoclaw']:\n    adapter = SystemAdapter\\(\\)\n    print\\(f'  {sys_name}: ✅ 支持'\\)\n\")",
+      "Bash(git init && git branch -M main)",
+      "Bash(git branch -m main && git status)",
+      "Bash(git add . && git status)"
+    ]
+  }
+}

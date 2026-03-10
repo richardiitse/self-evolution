@@ -1,0 +1,69 @@
+{
+  "name": "self-evolution",
+  "version": "1.0.0",
+  "description": "Self-Evolution 多系统 Skill - 支持 Claude Code、OpenClaw、NanoClaw 三系统调用",
+  "author": "52VisionWorld",
+  "homepage": "https://github.com/52VisionWorld/self-evolution",
+  "skills": [
+    {
+      "name": "consolidate",
+      "description": "工作区记忆整合 - 扫描重复文件、归档旧文件、生成整合报告",
+      "path": "skills/consolidation/SKILL.md",
+      "runner": "skills/consolidation/scripts/runner.py",
+      "parameters": {
+        "workspace": {
+          "type": "string",
+          "description": "工作区路径",
+          "default": "cwd"
+        },
+        "dry_run": {
+          "type": "boolean",
+          "description": "预览模式",
+          "default": true
+        },
+        "confirm": {
+          "type": "boolean",
+          "description": "执行整合",
+          "default": false
+        },
+        "archive_dir": {
+          "type": "string",
+          "description": "归档目录",
+          "default": ".archives"
+        }
+      }
+    },
+    {
+      "name": "hyperparameter",
+      "description": "超参数优化 - 自动调优超参数以获得最佳性能",
+      "path": "skills/hyperparameter/SKILL.md",
+      "runner": "skills/hyperparameter/scripts/runner.py",
+      "parameters": {
+        "search_space": {
+          "type": "object",
+          "description": "超参数搜索空间",
+          "required": true
+        },
+        "algorithm": {
+          "type": "string",
+          "description": "优化算法 (random/grid/bayesian)",
+          "default": "bayesian"
+        },
+        "max_iterations": {
+          "type": "integer",
+          "description": "最大迭代次数",
+          "default": 50
+        }
+      }
+    }
+  ],
+  "mcp": {
+    "enabled": true,
+    "config": ".mcp.json"
+  },
+  "supported_systems": [
+    "claude-code",
+    "openclaw",
+    "nanoclaw"
+  ]
+}
