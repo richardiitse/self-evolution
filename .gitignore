@@ -42,7 +42,10 @@ ENV/
 *.log
 
 # OMC state
-.omc/state/
+.omc/
+
+# Claude local settings
+.claude/settings.local.json
 
 # OS
 .DS_Store
