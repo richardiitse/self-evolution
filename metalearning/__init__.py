@@ -18,12 +18,20 @@ from .engine import (
     MetaLearningResult,
     MetaLearningStrategy
 )
+from .architecture_search import ModelArchitectureSearch
+from .hyperparameter_optimization import HyperparameterOptimizer
+from .learning_rate_adaptation import LearningRateAdapter
+from .transfer_learning import TransferLearningIntegrator
 
 __all__ = [
     "MetaLearningEngine",
     "MetaLearningTask",
     "MetaLearningResult",
-    "MetaLearningStrategy"
+    "MetaLearningStrategy",
+    "ModelArchitectureSearch",
+    "HyperparameterOptimizer",
+    "LearningRateAdapter",
+    "TransferLearningIntegrator"
 ]
 
 __version__ = "1.0.0"
