@@ -13,10 +13,17 @@ Components:
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Set
 import json
 import shutil
 import os
+
+# Import shared similarity utilities
+from .similarity_utils import (
+    calculate_name_similarity,
+    calculate_content_similarity,
+    calculate_key_overlap_similarity
+)
 
 
 @dataclass
@@ -306,95 +313,10 @@ class SimilarityFinder:
         self.content_similarity_threshold = 0.8
         self.metadata_similarity_threshold = 0.6
     
-    def calculate_name_similarity(self, name1: str, name2: str) -> float:
-        """
-        Calculate name similarity using edit distance.
-        
-        Args:
-            name1: First name
-            name2: Second name
-        
-        Returns:
-            Similarity score (0.0 - 1.0)
-        """
-        # Normalize names
-        norm1 = name1.lower().replace("_", "").replace("-", "").replace(" ", "")
-        norm2 = name2.lower().replace("_", "").replace("-", "").replace(" ", "")
-        
-        # Calculate edit distance
-        if norm1 == norm2:
-            return 1.0
-        
-        # Simple edit distance
-        len1, len2 = len(norm1), len(norm2)
-        matrix = [[0] * (len2 + 1) for _ in range(len1 + 1)]
-        
-        for i in range(len1 + 1):
-            matrix[i][0] = i
-        
-        for j in range(1, len2 + 1):
-            matrix[0][j] = j
-        
-        for i in range(1, len1 + 1):
-            for j in range(1, len2 + 1):
-                cost = 0
-                if norm1[i - 1] == norm2[j - 1]:
-                    cost = matrix[i - 1][j]
-                else:
-                    cost = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i][j + 1] + 1)
-                matrix[i][j] = cost
-        
-        similarity = 1.0 - (matrix[len1)][len2] / (len1 + len2))
-        
-        return similarity
-    
-    def calculate_content_similarity(self, content1: str, content2: str) -> float:
-        """
-        Calculate content similarity using word frequencies.
-        
-        Args:
-            content1: First content
-            content2: Second content
-        
-        Returns:
-            Similarity score (0.0 - 1.0)
-        """
-        # Tokenize into words
-        words1 = content1.lower().split()
-        words2 = content2.lower().split()
-        
-        # Create word frequency maps
-        freq1 = {}
-        freq2 = {}
-        
-        for word in words1:
-            freq1[word] = freq1.get(word, 0) + 1
-        
-        for word in words2:
-            freq2[word] = freq2.get(word, 0) + 1
-        
-        # Calculate cosine similarity
-        all_words = set(freq1.keys()).union(set(freq2.keys()))
-        
-        dot_product = 0.0
-        norm1_sq = 0.0
-        norm2_sq = 0.0
-        
-        for word in all_words:
-            f1 = freq1.get(word, 0)
-            f2 = freq2.get(word, 0)
-            
-            dot_product += f1 * f2
-            norm1_sq += f1 ** 2
-            norm2_sq += f2 ** 2
-        
-        if norm1_sq == 0 or norm2_sq == 0:
-            return 0.0
-        
-        similarity = dot_product / ((norm1_sq ** 0.5) * (norm2_sq ** 0.5))
-        
-        return similarity
-    
+    # calculate_name_similarity is now imported from similarity_utils
+    # This reduces code duplication and improves maintainability
+    # calculate_content_similarity is now imported from similarity_utils
+    # This reduces code duplication and improves maintainability
     def find_similar_items(self, items: List[Dict[str, Any]], 
                            threshold: float = 0.7) -> List[SimilarGroup]:
         """
@@ -435,7 +357,7 @@ class SimilarityFinder:
                     continue
                 
                 # Calculate name similarity
-                name_similarity = self.calculate_name_similarity(name1, name2)
+                name_similarity = calculate_name_similarity(name1, name2)
                 
                 # Read content for similarity check
                 try:
@@ -445,7 +367,7 @@ class SimilarityFinder:
                     continue
                 
                 # Calculate content similarity
-                content_similarity = self.calculate_content_similarity(content1, content2)
+                content_similarity = calculate_content_similarity(content1, content2)
                 
                 # Calculate metadata similarity
                 item1_type = item1.get("type", "other")

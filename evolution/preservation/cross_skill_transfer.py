@@ -17,6 +17,13 @@ from typing import List, Dict, Any, Optional, Tuple
 import json
 import os
 
+# Import shared similarity utilities
+from .similarity_utils import (
+    calculate_key_overlap_similarity,
+    calculate_string_similarity,
+    calculate_metadata_similarity
+)
+
 
 @dataclass
 class Pattern:
@@ -125,80 +132,45 @@ class SimilarityScorer:
         else:
             return 0.0
     
+    # score_context_similarity now uses calculate_key_overlap_similarity from similarity_utils
     def score_context_similarity(self, pattern1: Pattern, pattern2: Pattern) -> float:
         """
-        Score context similarity.
-        
+        Score context similarity using shared utility function.
+
         Returns: 1.0 if contexts have overlapping keys, 0.0 otherwise
         """
         context1 = pattern1.context or {}
         context2 = pattern2.context or {}
         
-        if not context1 or not context2:
-            return 0.0
-        
-        # Count overlapping keys
         keys1 = set(context1.keys())
         keys2 = set(context2.keys())
-        overlap = len(keys1.intersection(keys2))
         
-        # Calculate similarity
-        total_keys = len(keys1.union(keys2))
-        if total_keys == 0:
-            return 0.0
-        
-        return overlap / total_keys
-    
+        return calculate_key_overlap_similarity(keys1, keys2)
+    # score_implementation_similarity now uses calculate_string_similarity from similarity_utils
     def score_implementation_similarity(self, pattern1: Pattern, pattern2: Pattern) -> float:
         """
-        Score implementation similarity.
-        
+        Score implementation similarity using shared utility function.
+
         Returns: 0.0 - 1.0 based on string comparison
         """
-        impl1 = pattern1.implementation or ""
-        impl2 = pattern2.implementation or ""
+        impl1 = str(pattern1.implementation or "")
+        impl2 = str(pattern2.implementation or "")
         
-        # If both are strings, compare them
-        if isinstance(impl1, str) and isinstance(impl2, str):
-            if impl1 == impl2:
-                return 1.0
-            else:
-                # Simple similarity based on common characters
-                common_chars = set(impl1).intersection(set(impl2))
-                total_chars = len(set(impl1).union(set(impl2)))
-                
-                if total_chars == 0:
-                    return 0.0
-                
-                return len(common_chars) / total_chars
-        else:
-            # Different types - can't compare
-            return 0.0
-    
+        if impl1 == impl2:
+            return 1.0
+        
+        return calculate_string_similarity(impl1, impl2)
+    # score_metadata_similarity now uses calculate_metadata_similarity from similarity_utils
     def score_metadata_similarity(self, pattern1: Pattern, pattern2: Pattern) -> float:
         """
-        Score metadata similarity.
-        
+        Score metadata similarity using shared utility function.
+
         Returns: 1.0 if all metadata matches, 0.0 otherwise
         """
         metadata1 = pattern1.metadata or {}
         metadata2 = pattern2.metadata or {}
         
-        if not metadata1 or not metadata2:
-            return 0.0
-        
-        # Count matching metadata keys
-        matching_keys = []
-        for key in metadata1.keys():
-            if key in metadata2 and metadata1[key] == metadata2[key]:
-                matching_keys.append(key)
-        
-        if not matching_keys:
-            return 0.0
-        
-        total_keys = len(metadata1.keys())
-        return len(matching_keys) / total_keys
-    
+        return calculate_metadata_similarity(metadata1, metadata2)
     def calculate_overall_similarity(self, pattern1: Pattern, pattern2: Pattern) -> float:
         """
         Calculate overall pattern similarity.

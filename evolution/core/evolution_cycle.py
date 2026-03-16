@@ -560,12 +560,13 @@ class EvolutionCycle:
     7. Validate - Validate safety and corrigibility
     """
 
-    def __init__(self, work_dir: Optional[str] = None):
+    def __init__(self, work_dir: Optional[str] = None, memory_dir: Optional[str] = None):
         """
         Initialize evolution cycle.
 
         Args:
             work_dir: Working directory for evolution
+            memory_dir: Directory for three-layer memory system
         """
         self.work_dir = Path(work_dir or os.getcwd())
         self.state_dir = self.work_dir / '.evolution'
@@ -579,6 +580,15 @@ class EvolutionCycle:
         self.code_modifier = CodeModifier(str(self.state_dir / 'backups'))
         self.change_validator = ChangeValidator()
         self.change_applicator = ChangeApplicator(self.code_modifier)
+
+        # NEW: 集成三层记忆系统
+        self.memory_dir = Path(memory_dir or (self.work_dir / "memory"))
+        self.memory_dir.mkdir(parents=True, exist_ok=True)
+
+        # 延迟导入以避免循环依赖
+        self._memory_available = False
+        self.memory_system = None
+        self.memory_driven_evolution = None
 
         self.current_cycle_id: Optional[str] = None
         self.cycle_events: List[EvolutionEvent] = []
@@ -732,21 +742,59 @@ class EvolutionCycle:
         """
         observation_id = str(uuid.uuid4())
 
-        # Gather metrics
-        metrics = {
-            'performance': self._measure_performance(),
-            'resource_usage': self._get_resource_metrics(),
-            'code_quality': self._assess_code_quality()
-        }
+        # 尝试加载记忆系统（延迟导入）
+        if not self._memory_available:
+            try:
+                from .three_layer_memory import ThreeLayerMemorySystem
+                from .memory_driven_evolution import MemoryDrivenEvolution
 
-        # Collect recent logs
+                self.memory_system = ThreeLayerMemorySystem(str(self.memory_dir))
+                self.memory_driven_evolution = MemoryDrivenEvolution(str(self.memory_dir))
+                self._memory_available = True
+            except Exception:
+                pass  # 使用 fallback 实现
+
+        # 使用三层记忆分析
+        if self._memory_available:
+            try:
+                memory_analysis = self.memory_driven_evolution.analyze_memory_state()
+
+                # 从记忆分析中提取观察结果
+                issues = []
+                issues.extend(memory_analysis.soul_issues.get("issues", []))
+
+                opportunities = []
+                if memory_analysis.long_term_issues.get("transfer_opportunities"):
+                    opportunities.append("发现可迁移的高价值模式")
+
+                metrics = {
+                    'performance': self._measure_performance(),
+                    'resource_usage': self._get_resource_metrics(),
+                    'code_quality': self._assess_code_quality(),
+                    'memory_health': memory_analysis.overall_health,
+                    'soul_integrity': memory_analysis.soul_issues.get("health_score", 1.0),
+                    'log_error_rate': memory_analysis.log_issues.get("high_error_rate", 0.0),
+                    'consolidation_pending': memory_analysis.long_term_issues.get("consolidation_needed", False)
+                }
+            except Exception:
+                # Fallback to original implementation
+                metrics = self._get_fallback_metrics()
+                issues = []
+                opportunities = []
+        else:
+            # Fallback to original implementation
+            metrics = {
+                'performance': self._measure_performance(),
+                'resource_usage': self._get_resource_metrics(),
+                'code_quality': self._assess_code_quality()
+            }
+            issues = self._identify_issues(metrics, [])
+            opportunities = self._identify_opportunities(metrics, [])
+
+        # 收集最近的日志
         logs = []
         for entry in self.log.get_entries(limit=50):
             logs.append(f"{entry.timestamp}: {entry.message}")
-
-        # Identify issues and opportunities
-        issues = self._identify_issues(metrics, logs)
-        opportunities = self._identify_opportunities(metrics, logs)
 
         return Observation(
             observation_id=observation_id,
@@ -757,6 +805,18 @@ class EvolutionCycle:
             issues=issues,
             opportunities=opportunities
         )
+
+    def _get_fallback_metrics(self) -> Dict[str, Any]:
+        """Fallback metrics when memory system unavailable"""
+        return {
+            'performance': self._measure_performance(),
+            'resource_usage': self._get_resource_metrics(),
+            'code_quality': self._assess_code_quality(),
+            'memory_health': 1.0,
+            'soul_integrity': 1.0,
+            'log_error_rate': 0.0,
+            'consolidation_pending': False
+        }
 
     def analyze(self, observations: Observation) -> Analysis:
         """

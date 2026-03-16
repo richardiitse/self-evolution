@@ -18,6 +18,8 @@ Components:
 - CodeModifier: Code change application
 - ChangeValidator: Change validation with corrigibility
 - ChangeApplicator: Apply changes with rollback
+- ThreeLayerMemorySystem: Three-layer memory architecture for autonomous evolution
+- MemoryDrivenEvolution: Evidence-based evolution options from memory analysis
 
 Research:
 - Soares et al. (2015) "Corrigibility"
@@ -55,6 +57,28 @@ from .modification import (
     ChangeApplicator
 )
 
+# NEW: 导出三层记忆系统
+from .three_layer_memory import (
+    SoulLayerMemory,
+    LongTermMemory,
+    LogEntry as MemoryLogEntry,
+    MemorySnapshot,
+    ConsolidationResult,
+    SoulLayerReader,
+    LongTermMemoryLayer,
+    LogLayer,
+    ThreeLayerMemorySystem
+)
+
+# NEW: 导出记忆驱动进化
+from .memory_driven_evolution import (
+    EvolutionOption,
+    MemoryAnalysisResult,
+    EvolutionExecutionResult,
+    MemoryDrivenEvolution,
+    EvidenceSource
+)
+
 __all__ = [
     # Evolution Cycle
     "EvolutionEvent",
@@ -79,8 +103,23 @@ __all__ = [
     "CodeModifier",
     "ChangeValidator",
     "ChangeApplicator",
+    # NEW: Three-Layer Memory
+    "SoulLayerMemory",
+    "LongTermMemory",
+    "MemorySnapshot",
+    "ConsolidationResult",
+    "SoulLayerReader",
+    "LongTermMemoryLayer",
+    "LogLayer",
+    "ThreeLayerMemorySystem",
+    # NEW: Memory-Driven Evolution
+    "EvolutionOption",
+    "MemoryAnalysisResult",
+    "EvolutionExecutionResult",
+    "MemoryDrivenEvolution",
+    "EvidenceSource",
     # Common
     "ValidationResult"
 ]
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
